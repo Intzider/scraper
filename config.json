@@ -1,6 +1,10 @@
 {
+  "visit": {
+    "njuskalo": true,
+    "index": true
+  },
   "price_max": 160000,
   "max_pages": 3,
-  "m2_min": 45,
+  "m2_min": 44,
   "recipients": []
 }
