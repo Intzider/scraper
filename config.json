@@ -5,7 +5,7 @@
     "oglasnik": true
   },
   "price_max": 160000,
-  "max_pages": 3,
+  "pages_max": 3,
   "m2_min": 44,
   "recipients": []
 }

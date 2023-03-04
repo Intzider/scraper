@@ -7,7 +7,7 @@ class Kvart(Enum):
     oglasnik = ["7445", "7582", "7600", "7662", "7669", "7679"]
 
 
-class ClassName(Enum):
+class Class(Enum):
     njuskalo = "EntityList-item--Regular"
     index = "OglasiRezHolder"
     oglasnik = "oglasnik-box"
@@ -19,7 +19,7 @@ class Elem(Enum):
     oglasnik = "div"
 
 
-class URIs(Enum):
+class URLs(Enum):
     njuskalo = "https://www.njuskalo.hr"
     index = ""
     oglasnik = ""
