@@ -1,7 +1,8 @@
 {
   "visit": {
     "njuskalo": true,
-    "index": true
+    "index": true,
+    "oglasnik": true
   },
   "price_max": 160000,
   "max_pages": 3,

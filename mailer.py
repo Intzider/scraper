@@ -27,4 +27,4 @@ def send_email(subject: str, time: str, payload: str, recipients: list[str]):
         server.ehlo()
         server.login(sender_email, sender_password)
         for recipient in recipients:
-            server.sendmail(sender_email, recipient, get_message(recipient, subject + time, payload))
+            server.sendmail(sender_email, recipient, get_message(recipient, " ".join([subject, time]), payload))
