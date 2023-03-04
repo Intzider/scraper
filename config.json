@@ -1,9 +1,11 @@
 {
   "visit": {
+    "njuskalo_najam": false,
     "njuskalo": true,
     "index": true,
     "oglasnik": true
   },
+  "price_najam_max": 500,
   "price_max": 160000,
   "pages_max": 3,
   "m2_min": 44,

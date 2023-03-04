@@ -29,12 +29,17 @@ def create_new_header():
 
 class Scraper:
     def __init__(self, main_directory: str, to_scrape: dict, pages: int):
+
         self.__main_directory = main_directory
         self.__pages = pages
         self.__found = {}
 
-        for site, urls in to_scrape.items():
-            self.__parse_and_save(site, urls)
+        try:
+            for site, urls in to_scrape.items():
+                self.__parse_and_save(site, urls)
+        except KeyboardInterrupt:
+            print("keyboard interrupt")
+            pass
 
     def get_found(self):
         return deepcopy(self.__found)
@@ -56,25 +61,28 @@ class Scraper:
                     pass
 
             if len(new) > 0:
+                print("found new hits")
                 f.writelines(new)
                 self.__found[f"{site} -- {time}"] = "\n".join(new)
+            else:
+                print("no new hits")
 
     def __find_flats(self, site: str, urls: list[str]):
-        flats = []
+        print(f"find for {site}")
 
+        flats = []
         for url in urls:
-            print(site, end="")
             for i in range(1, self.__pages + 1):
-                print(i, end="" if i != self.__pages else "\n")
                 try:
                     with urlopen(Request(f'{url}{i}', headers=create_new_header())) as data:
                         new = soup(data.read(), "html.parser").findAll(Elem[site].value, {'class': [Class[site].value]})
                         if len(new) == 0:
-                            print("captcha")
+                            print("possible captcha trigger")
                             break
                         flats += new
                     sleep(30)
-                except urllib.error:
+                except (urllib.error.URLError, urllib.error.HTTPError):
+                    print("urllib exception")
                     pass
 
         return flats

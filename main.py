@@ -18,7 +18,13 @@ def create_txt(file_name: str):
 
 
 def get_urls(site: str):
+    create_txt(site)
     match site:
+        case "njuskalo_najam":
+            return [f"https://www.njuskalo.hr/iznajmljivanje-stanova"
+                    f"?geo%5BlocationIds%5D={'%2C'.join(Kvart[site].value)}"
+                    f"&price%5Bmax%5D={config.get('price_najam_max', 500)}"
+                    f"&page="]
         case "njuskalo":
             return [f"https://www.njuskalo.hr/prodaja-stanova"
                     f"?geo%5BlocationIds%5D={'%2C'.join(Kvart[site].value)}"
@@ -51,6 +57,7 @@ def get_urls(site: str):
 
 if __name__ == "__main__":
     config = load_config()
+
     to_scrape = {name: get_urls(name) for name, visit in config["visit"].items() if visit}
 
     scraper = Scraper(DIR, to_scrape, config.get('pages_max', 1))
