@@ -7,7 +7,7 @@
   },
   "price_najam_max": 500,
   "price_max": 160000,
-  "pages_max": 3,
+  "pages_max": 1,
   "m2_min": 44,
   "recipients": []
 }

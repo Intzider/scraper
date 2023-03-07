@@ -1,24 +1,33 @@
 import json
 import os
+from datetime import datetime
 
 from filters import Kvart
 from mailer import send_email
 from scraper import Scraper
 
-DIR = os.path.dirname(os.path.abspath(__file__))
+__all__ = []
 
 
 def load_config():
-    with open(os.path.join(DIR, "config.json"), "r") as file:
+    with open(os.path.join(directory, "config.json"), "r") as file:
         return json.load(file)
 
 
-def create_txt(file_name: str):
-    open(os.path.join(DIR, file_name + ".txt"), "a+").close()
+def create_txt(file_name: str) -> list[str]:
+    with open(os.path.join(directory, file_name + ".txt"), "a+") as file:
+        file.seek(0)
+        return file.readlines()
 
 
-def get_urls(site: str):
-    create_txt(site)
+def update_txts():
+    for file_name, data in items:
+        if file_name != "info":
+            with open(os.path.join(directory, file_name + ".txt"), "a+") as file:
+                file.writelines(data)
+
+
+def get_urls(site: str) -> list[str]:
     match site:
         case "njuskalo_najam":
             return [f"https://www.njuskalo.hr/iznajmljivanje-stanova"
@@ -56,10 +65,14 @@ def get_urls(site: str):
 
 
 if __name__ == "__main__":
+
+    directory = os.path.dirname(os.path.abspath(__file__))
+    time = datetime.now().strftime("%m/%d/%Y, %H:%M")
     config = load_config()
 
-    to_scrape = {name: get_urls(name) for name, visit in config["visit"].items() if visit}
+    to_scrape = {name: (get_urls(name), create_txt(name)) for name, visit in config["visit"].items() if visit}
 
-    scraper = Scraper(DIR, to_scrape, config.get('pages_max', 1))
-    for subject, body in scraper.get_found().items():
-        send_email(subject, body, config.get('recipients'))
+    items = Scraper(to_scrape, config.get('pages_max', 1)).get_found().items()
+    for subject, body in items:
+        send_email(directory, f"{subject} -- {time}", body, config.get('recipients'))
+    update_txts()
