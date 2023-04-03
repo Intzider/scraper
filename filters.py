@@ -13,6 +13,7 @@ class Class(Enum):
     njuskalo = "EntityList-item--Regular"
     index = "OglasiRezHolder"
     oglasnik = "oglasnik-box"
+    isthereanydeal = "bundle-container-outer giveaway"
 
 
 class Elem(Enum):
@@ -20,6 +21,7 @@ class Elem(Enum):
     njuskalo = "li"
     index = "div"
     oglasnik = "div"
+    isthereanydeal = "div"
 
 
 class URLs(Enum):
@@ -27,3 +29,4 @@ class URLs(Enum):
     njuskalo = "https://www.njuskalo.hr"
     index = ""
     oglasnik = ""
+    isthereanydeal = ""

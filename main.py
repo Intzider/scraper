@@ -60,6 +60,8 @@ def get_urls(site: str) -> list[str]:
                     f"&ad_location_2%5B%5D=7442"
                     f"{''.join([f'&ad_location_3%5B{i}%5D={k}' for i, k in enumerate(Kvart[site].value)])}"
                     f"&page="]
+        case "isthereanydeal":
+            return ["https://isthereanydeal.com/specials/"]
         case _:
             return []
 

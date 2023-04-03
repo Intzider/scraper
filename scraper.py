@@ -51,7 +51,9 @@ class Scraper:
 
         for flat in self.__find_flats(site, urls):
             try:
-                entries = [URLs[site].value + str(path['href']) + "\n" for path in flat.find_all('a')]
+                entries = [URLs[site].value + str(path['href']) + "\n"
+                           for path in flat.find_all('a')
+                           if path.has_attr('href')]
                 for entry in entries:
                     if entry in existing or entry in new:
                         continue
