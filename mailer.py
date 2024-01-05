@@ -12,9 +12,9 @@ PORT = 587
 
 
 def get_email(directory: str):
-    with open(os.path.join(directory, "sender_mail.json"), "r") as file:
+    with open(os.path.join(directory, 'config', "sender_mail.json"), "r") as file:
         mail = json.load(file)
-        return mail["email"], mail["app"]
+        return mail["email"], mail["app"], mail['error_email']
 
 
 def create_message(sender_email: str, recipient: str, subject: str, payload: str):
@@ -28,7 +28,7 @@ def create_message(sender_email: str, recipient: str, subject: str, payload: str
 
 
 def send_email(directory: str, subject: str, payload: str, recipients: list[str]):
-    (sender_email, sender_password) = get_email(directory)
+    (sender_email, sender_password, error_email) = get_email(directory)
 
     with smtplib.SMTP(SMTP_SERVER, PORT) as server:
         server.ehlo()
@@ -36,4 +36,8 @@ def send_email(directory: str, subject: str, payload: str, recipients: list[str]
         server.ehlo()
         server.login(sender_email, sender_password)
         for recipient in recipients:
+            if "error" in subject or "exception" in payload:
+                subject += recipient
+                server.sendmail(sender_email, error_email, create_message(sender_email, error_email, subject, payload))
+                return
             server.sendmail(sender_email, recipient, create_message(sender_email, recipient, subject, payload))

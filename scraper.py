@@ -62,11 +62,11 @@ class Scraper:
                 pass
 
         if len(new) > 0:
-            info = f"{site:<10} --> found new hits\n"
+            info = f"{site:<14} --> found new hits\n"
             self.__found[site] = "\n".join(new)
             print(info)
         else:
-            info = f"{site:<10} --> no new hits\n"
+            info = f"{site:<14} --> no new hits\n"
             print(info, end="")
 
     def __find_flats(self, site: str, urls: list[str]) -> list:

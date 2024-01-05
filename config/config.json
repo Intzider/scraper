@@ -1,0 +1,30 @@
+{
+  "": {
+    "visit": {
+      "njuskalo_najam": {
+        "send": false,
+        "kvart": ["1248", "1257", "1258", "1260", "1261", "1262"]
+      },
+      "njuskalo": {
+        "send": false,
+        "kvart": ["1248", "1257", "1258", "1260", "1261", "1262"]
+      },
+      "index": {
+        "send": true,
+        "kvart": ["1248", "1257", "1258", "1260", "1261", "1262"]
+      },
+      "oglasnik": {
+        "send": false,
+        "kvart": ["7445", "7582", "7600", "7662", "7669", "7679"]
+      },
+      "isthereanydeal": {
+        "send": true
+      }
+    },
+    "pages_max": 1,
+    "price_najam_max": 500,
+    "price_max": 160000,
+    "m2_min": 44,
+    "additional_recipients": []
+  }
+}
