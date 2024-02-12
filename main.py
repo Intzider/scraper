@@ -60,7 +60,7 @@ def get_urls(kvartovi: str, site: str) -> list[str]:
                     f"{''.join([f'&ad_location_3%5B{i}%5D={k}' for i, k in enumerate(kvartovi)])}"
                     f"&page="]
         case "isthereanydeal":
-            return ["https://isthereanydeal.com/specials/"]
+            return ["https://isthereanydeal.com/giveaways/"]
         case _:
             return []
 

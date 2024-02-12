@@ -1,0 +1,10 @@
+[Unit]
+Description=Web scraper and sender timer
+After=network.target
+
+[Timer]
+Unit=scraper.service
+OnCalendar=*-*-* 7..22:00:00
+
+[Install]
+WantedBy=timers.target

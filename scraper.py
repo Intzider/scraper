@@ -7,6 +7,7 @@ from random import sample, randint
 from bs4 import BeautifulSoup as soup
 
 from filters import *
+from isthereanydeal import get_hits
 
 __all__ = ["Scraper"]
 
@@ -21,7 +22,7 @@ AGENTS = [
 def create_new_header():
     return {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'User-Agent': "".join([AGENTS[n] + " " for n in sample(range(len(AGENTS)), randint(1, len(AGENTS)))]).strip(),
+        'User-Agent': "".join([AGENTS[n] + " " for n in sample(range(len(AGENTS)), randint(1, len(AGENTS)))]).strip()
     }
 
 
@@ -48,18 +49,22 @@ class Scraper:
 
     def __parse_and_save(self, site: str, urls: list[str], existing: list[str]):
         new = []
+        entries = []
 
-        for flat in self.__find_flats(site, urls):
-            try:
-                entries = [URLs[site].value + str(path['href']) + "\n"
-                           for path in flat.find_all('a')
-                           if path.has_attr('href')]
-                for entry in entries:
-                    if entry in existing or entry in new:
-                        continue
-                    new.append(entry)
-            except TypeError:
-                pass
+        if site == 'isthereanydeal':
+            entries = get_hits()
+        else:
+            for hit in self.__find_hits(site, urls):
+                try:
+                    entries = [URLs[site].value + str(path['href']) + "\n"
+                               for path in hit.find_all('a')
+                               if path.has_attr('href')]
+                except TypeError:
+                    pass
+        for entry in entries:
+            if entry in existing or entry in new:
+                continue
+            new.append(entry)
 
         if len(new) > 0:
             info = f"{site:<14} --> found new hits\n"
@@ -69,14 +74,17 @@ class Scraper:
             info = f"{site:<14} --> no new hits\n"
             print(info, end="")
 
-    def __find_flats(self, site: str, urls: list[str]) -> list:
-        flats = []
+    def __find_hits(self, site: str, urls: list[str]) -> list:
+        hits = []
         for index, url in enumerate(urls):
             retried = False
             for i in range(1, self.__pages + 1):
+                print(urlopen(Request(f'{url}{"" if self.__pages == 1 else i}', headers=create_new_header())).read())
                 try:
-                    with urlopen(Request(f'{url}{i}', headers=create_new_header())) as data:
+                    with urlopen(Request(f'{url}{"" if self.__pages == 1 else i}', headers=create_new_header())) as data:
                         new = soup(data.read(), "html.parser").findAll(Elem[site].value, {'class': [Class[site].value]})
+                        print(new)
+                        print(url, data.read(), soup(data.read(), "html.parser"))
                         if len(new) == 0:
                             info = f"{site:<10} --> ({index + 1}/{len(urls)}|{i}/{self.__pages}) captcha ?\n"
                             self.__found["error"] += info
@@ -88,7 +96,7 @@ class Scraper:
                                 continue
                             else:
                                 break
-                        flats += new
+                        hits += new
                 except (urllib.error.URLError, urllib.error.HTTPError):
                     info = f"{site:<10} --> ({index + 1}/{len(urls)}|{i}/{self.__pages}) urllib exception\n"
                     self.__found["error"] += info
@@ -98,4 +106,4 @@ class Scraper:
                         sleep(5)
                         i -= 1
 
-        return flats
+        return hits
