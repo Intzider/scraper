@@ -1,6 +1,5 @@
 import json
 from random import sample, randint
-import os
 import requests
 from dotenv import load_dotenv
 
@@ -30,11 +29,11 @@ def get_hits():
     phpsessionid = ses.cookies.get_dict().get("PHPSESSID")
 
     url = "https://isthereanydeal.com/giveaways/api/list/"
-    data = {"_id": 1, "offset": 0, "sort": "-expiry", "filter": None, "options": []}
+    data = {"_id": 1, "offset": 0, "sort": None, "filter": None, "options": []}
 
     x = requests.post(url, data=json.dumps(data), headers=create_new_header(phpsessionid, itad))
 
     hits = [x.get('url', "") for x in json.loads(x.text).get('data', [])]
     hits = [y for y in hits if 'indiegala' not in y]
-    hits = ['<' + (y if "epicgames" not in y else y.split('&')[0]) + '>\n' for y in hits]
+    hits = ['<' + y + '>\n' for y in hits]
     return hits
