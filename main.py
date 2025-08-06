@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 
-from mailer import send_email
+from mailer import send_email, get_email
 from scraper import Scraper
 
 __all__ = []
@@ -72,12 +72,16 @@ if __name__ == "__main__":
     configs = load_config()
 
     for email, config in configs.items():
-        to_scrape = {name: (get_urls(config['visit'][name].get('kvart', []), name), create_txt(name))
-                     for name, payload in config["visit"].items()
-                     if payload.get('send', False)}
-        items = Scraper(to_scrape, config.get('pages_max', 1)).get_found().items()
-        additional_recipients = config.get('additional_recipients', [])
-        all_recipients = [email] + additional_recipients
-        for subject, body in items:
-            send_email(directory, f"{subject} -- {time}", body, all_recipients)
-        update_txts()
+        try:
+            to_scrape = {name: (get_urls(config['visit'][name].get('kvart', []), name), create_txt(name))
+                         for name, payload in config["visit"].items()
+                         if payload.get('send', False)}
+            items = Scraper(to_scrape, config.get('pages_max', 1)).get_found().items()
+            additional_recipients = config.get('additional_recipients', [])
+            all_recipients = [email] + additional_recipients
+            for subject, body in items:
+                send_email(directory, f"{subject} -- {time}", body, all_recipients)
+            update_txts()
+        except Exception as e:
+            (_, _, error_email) = get_email(directory)
+            send_email(directory, "Scraper failed", str(e), [error_email])

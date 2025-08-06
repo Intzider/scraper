@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 
 import requests
 
-__all__ = ["send_email"]
+__all__ = ["get_email", "send_email"]
 
 SMTP_SERVER = "smtp.gmail.com"
 PORT = 587
