@@ -1,4 +1,9 @@
-venv
+venv/
 .idea/
 __pycache__/
-*.txt
+.env
+state/
+config/
+scraped/
+env.txt
+wifilog.txt

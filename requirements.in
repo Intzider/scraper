@@ -1,0 +1,4 @@
+requests
+python-dotenv
+# zoneinfo needs it, slim images ship without system tz data
+tzdata
