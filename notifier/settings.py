@@ -42,5 +42,5 @@ def load() -> Settings:
         error_email=os.getenv("ERROR_EMAIL", ""),
         state_file=Path(os.getenv("STATE_FILE", ROOT / "state" / "seen.txt")),
         timezone=ZoneInfo(os.getenv("TIMEZONE", "Europe/Zagreb")),
-        run_hours=_hours(os.getenv("RUN_HOURS", "7-22")),
+        run_hours=_hours(os.getenv("RUN_HOURS", "7-21")),
     )
