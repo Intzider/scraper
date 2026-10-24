@@ -17,5 +17,3 @@ jobs:
       - name: Smoke test against the live ITAD page
         run: docker run --rm a-scraper:ci python -m notifier --dry-run
 
-      - name: Frontend syntax check
-        run: node --check web/app.js

@@ -1,9 +1,8 @@
 # web_scraper
 
-Two independent parts:
+Checks [IsThereAnyDeal giveaways](https://isthereanydeal.com/giveaways/) and sends new free games by email and to Discord. Failures send the traceback to `ERROR_EMAIL`.
 
-- **`notifier/`**: checks [IsThereAnyDeal giveaways](https://isthereanydeal.com/giveaways/) and sends new free games by email and to Discord. Failures send the traceback to `ERROR_EMAIL`.
-- **`web/`**: static page that builds search links for Njuškalo, Index oglasi and Oglasnik from one set of filters. No server needed: open `web/index.html` in a browser.
+Sources are listed in `SOURCES` in `notifier/__main__.py`; each one is a function returning the URLs it currently lists. Sending, the seen-file and the hourly loop are shared.
 
 ## Notifier
 
@@ -43,6 +42,3 @@ pip-compile --generate-hashes --strip-extras --upgrade requirements.in  # upgrad
 
 Dependabot opens a weekly PR that does the upgrade for you (plus the Docker base image). CI builds the image and does a `--dry-run` against the live ITAD page, so a green PR is safe to merge.
 
-## Web
-
-Filters are remembered in the browser. **Otvori sve** opens every link in a new tab; allow popups for the page or the browser will only open the first one. To add a site, add an entry to `SITES` in `web/app.js`.

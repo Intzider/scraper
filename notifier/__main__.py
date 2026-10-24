@@ -1,6 +1,7 @@
 import argparse
 import time
 import traceback
+from collections.abc import Callable
 from datetime import datetime, timedelta
 
 from . import settings as settings_module
@@ -9,26 +10,33 @@ from .notify import send_discord, send_email
 from .state import load_seen, mark_seen
 
 
+# name -> function returning the urls currently listed by that source
+SOURCES: dict[str, Callable[[], list[str]]] = {
+    "isthereanydeal": fetch_giveaways,
+}
+
+
 def run(settings: settings_module.Settings, dry_run: bool = False) -> None:
-    seen = load_seen(settings.state_file)
-    new = [url for url in dict.fromkeys(fetch_giveaways()) if url not in seen]
-    if not new:
-        print("isthereanydeal --> no new hits", flush=True)
-        return
+    for name, fetch in SOURCES.items():
+        seen = load_seen(settings.state_file)
+        new = [url for url in dict.fromkeys(fetch()) if url not in seen]
+        if not new:
+            print(f"{name} --> no new hits", flush=True)
+            continue
 
-    print(f"isthereanydeal --> {len(new)} new hits", flush=True)
-    # <> stops discord from expanding every link into an embed
-    body = "\n".join(f"<{url}>" for url in new)
-    if dry_run:
-        print(body)
-        return
+        print(f"{name} --> {len(new)} new hits", flush=True)
+        # <> stops discord from expanding every link into an embed
+        body = "\n".join(f"<{url}>" for url in new)
+        if dry_run:
+            print(body)
+            continue
 
-    now = datetime.now(settings.timezone).strftime("%m/%d/%Y, %H:%M")
-    if settings.recipients:
-        send_email(settings, f"isthereanydeal -- {now}", body, settings.recipients)
-    if settings.discord_channels:
-        send_discord(settings, body)
-    mark_seen(settings.state_file, new)
+        now = datetime.now(settings.timezone).strftime("%m/%d/%Y, %H:%M")
+        if settings.recipients:
+            send_email(settings, f"{name} -- {now}", body, settings.recipients)
+        if settings.discord_channels:
+            send_discord(settings, body)
+        mark_seen(settings.state_file, new)
 
 
 def run_safely(settings: settings_module.Settings) -> bool:
