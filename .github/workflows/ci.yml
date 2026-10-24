@@ -1,0 +1,21 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t a-scraper:ci .
+
+      - name: Smoke test against the live ITAD page
+        run: docker run --rm a-scraper:ci python -m notifier --dry-run
+
+      - name: Frontend syntax check
+        run: node --check web/app.js

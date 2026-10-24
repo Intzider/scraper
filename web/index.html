@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pretraga stanova</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Pretraga stanova</h1>
+
+    <form id="filters" onsubmit="return false">
+      <fieldset class="mode">
+        <label><input type="radio" name="mode" value="buy"> Prodaja</label>
+        <label><input type="radio" name="mode" value="rent"> Najam</label>
+      </fieldset>
+
+      <div class="grid">
+        <label class="buy-only">Cijena od (€) <input type="number" name="priceMin" min="0" step="1000"></label>
+        <label class="buy-only">Cijena do (€) <input type="number" name="priceMax" min="0" step="1000"></label>
+        <label class="rent-only">Najam do (€) <input type="number" name="rentMax" min="0" step="50"></label>
+        <label class="buy-only">m² od <input type="number" name="m2Min" min="0"></label>
+        <label class="buy-only">m² do <input type="number" name="m2Max" min="0"></label>
+      </div>
+
+      <label>Kvartovi – njuškalo / index id-evi <input type="text" name="njuskaloIds"></label>
+      <label class="buy-only">Kvartovi – oglasnik id-evi <input type="text" name="oglasnikIds"></label>
+
+      <div class="actions">
+        <button type="button" id="open-all">Otvori sve</button>
+        <button type="button" id="reset" class="secondary">Zadano</button>
+      </div>
+    </form>
+
+    <div id="results"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

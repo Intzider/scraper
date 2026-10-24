@@ -1,0 +1,4 @@
+*
+!requirements.txt
+!notifier/
+**/__pycache__
