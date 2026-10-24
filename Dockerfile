@@ -11,7 +11,10 @@ RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 
 COPY notifier ./notifier
 
-RUN useradd --uid 1000 --no-create-home app && mkdir -p /app/scraped && chown app /app/scraped
+# COPY keeps host file modes, so make the code readable whatever the clone's umask was
+RUN chmod -R a+rX /app/notifier \
+    && useradd --uid 1000 --no-create-home app \
+    && mkdir -p /app/scraped && chown app /app/scraped
 USER app
 
 CMD ["python", "-m", "notifier", "--loop"]
