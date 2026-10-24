@@ -1,4 +1,5 @@
 import argparse
+import logging
 import time
 import traceback
 from collections.abc import Callable
@@ -8,6 +9,8 @@ from . import settings as settings_module
 from .itad import fetch_giveaways
 from .notify import send_discord, send_email
 from .state import load_seen, mark_seen
+
+log = logging.getLogger("notifier")
 
 
 # name -> function returning the urls currently listed by that source
@@ -21,10 +24,10 @@ def run(settings: settings_module.Settings, dry_run: bool = False) -> None:
         seen = load_seen(settings.state_file)
         new = [url for url in dict.fromkeys(fetch()) if url not in seen]
         if not new:
-            print(f"{name} --> no new hits", flush=True)
+            log.info("%s --> no new hits", name)
             continue
 
-        print(f"{name} --> {len(new)} new hits", flush=True)
+        log.info("%s --> %d new hits", name, len(new))
         # <> stops discord from expanding every link into an embed
         body = "\n".join(f"<{url}>" for url in new)
         if dry_run:
@@ -45,12 +48,12 @@ def run_safely(settings: settings_module.Settings) -> bool:
         return True
     except Exception:
         error = traceback.format_exc()
-        print(error, flush=True)
+        log.error("run failed\n%s", error)
         if settings.error_email:
             try:
                 send_email(settings, "Scraper failed", error, [settings.error_email])
             except Exception:
-                traceback.print_exc()
+                log.exception("sending error email failed")
         return False
 
 
@@ -64,6 +67,15 @@ def loop(settings: settings_module.Settings) -> None:
         time.sleep(max((next_hour - datetime.now(settings.timezone)).total_seconds(), 1))
 
 
+def setup_logging(settings: settings_module.Settings) -> None:
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", "%Y-%m-%d %H:%M:%S")
+    # timestamps in TIMEZONE instead of the container's UTC
+    formatter.converter = lambda ts: datetime.fromtimestamp(ts, settings.timezone).timetuple()
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    logging.basicConfig(level=logging.INFO, handlers=[handler])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="python -m notifier")
     parser.add_argument("--loop", action="store_true", help="keep running and check every hour in RUN_HOURS")
@@ -71,6 +83,7 @@ def main() -> None:
     args = parser.parse_args()
 
     settings = settings_module.load()
+    setup_logging(settings)
     if args.dry_run:
         run(settings, dry_run=True)
     elif args.loop:
